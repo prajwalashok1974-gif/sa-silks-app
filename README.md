@@ -81,6 +81,22 @@ SA Silks is a saree manufacturing and wholesale management application built for
 | `npm run lint` | Run ESLint |
 | `npm run typecheck` | Check TypeScript types |
 
+## FastAPI backend
+
+The project includes a small FastAPI service in [`backend`](./backend), alongside the existing React/Supabase application. It currently provides a health-check endpoint and is structured for future worker, production, sales, and reporting APIs.
+
+To run it locally on Windows PowerShell:
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The API runs at `http://127.0.0.1:8000`. Visit `http://127.0.0.1:8000/docs` for interactive API documentation, or request `http://127.0.0.1:8000/health` to check its status.
+
 ## Environment and security
 
 Keep your real Supabase credentials in `.env`. The `.env` file is ignored by Git and must not be committed. The browser-facing Supabase anonymous key is intended for client applications; protect data with appropriate Supabase Row Level Security policies.
