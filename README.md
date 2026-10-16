@@ -1,8 +1,22 @@
 # SA Silks
 
-SA Silks is a saree manufacturing and wholesale management application built for tracking day-to-day business operations in one place.
+SA Silks is a saree manufacturing and wholesale management application for tracking business operations in one place.
 
-## Features
+## Project structure
+
+The repository is separated by responsibility:
+
+```text
+sa-silks-app/
+├── frontend/       React, TypeScript, Vite, and Tailwind application
+├── backend/        FastAPI service
+├── database/       SQL schema, Supabase migrations, and database setup
+└── README.md       Project documentation
+```
+
+### Frontend
+
+The React application provides:
 
 - Dashboard with production, sales, and inventory summaries
 - Worker management and weekly production tracking
@@ -13,79 +27,78 @@ SA Silks is a saree manufacturing and wholesale management application built for
 - Weekly production and sales reports
 - Supabase authentication and database integration
 
-## Tech stack
+### Backend
+
+The FastAPI service currently provides:
+
+- `GET /health` for service status
+- `GET /docs` for interactive Swagger documentation
+
+### Database
+
+Database resources are kept in [`database`](./database):
+
+- [`schema.sql`](./database/schema.sql) contains the database schema
+- [`supabase`](./database/supabase) contains Supabase migrations
+- [`SETUP_GUIDE.md`](./database/SETUP_GUIDE.md) contains database setup notes
+
+## Technology stack
 
 - React 18
 - TypeScript
 - Vite
 - Tailwind CSS
+- FastAPI
 - Supabase
 - Lucide React
 
 ## Prerequisites
 
 - Node.js 18 or newer
+- Python 3.11 or newer
 - A Supabase project
 
-## Getting started
+## Setup
 
-1. Clone the repository and enter the project directory:
+### 1. Clone the repository
 
-   ```bash
-   git clone https://github.com/prajwalashok1974-gif/sa-silks-app.git
-   cd sa-silks-app
-   ```
+```bash
+git clone https://github.com/prajwalashok1974-gif/sa-silks-app.git
+cd sa-silks-app
+```
 
-2. Install dependencies:
+### 2. Set up the frontend
 
-   ```bash
-   npm install
-   ```
+From the repository root:
 
-3. Create a local environment file:
+```powershell
+cd frontend
+npm install
+Copy-Item .env.example .env
+```
 
-   ```bash
-   cp .env.example .env
-   ```
+Add your Supabase project details to `frontend/.env`:
 
-   On Windows PowerShell, use:
+```env
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-actual-anon-key
+```
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
+Start the frontend:
 
-4. Add your Supabase project URL and anonymous key to `.env`:
+```powershell
+npm run dev
+```
 
-   ```env
-   VITE_SUPABASE_URL=https://your-project-id.supabase.co
-   VITE_SUPABASE_ANON_KEY=your-actual-anon-key
-   ```
+Vite normally serves the application at `http://localhost:5173`.
 
-5. Set up the database by running the SQL in [`schema.sql`](./schema.sql) in the Supabase SQL Editor. Apply any additional migrations in [`supabase/migrations`](./supabase/migrations) as needed.
+### 3. Set up the database
 
-6. Start the development server:
+Run [`database/schema.sql`](./database/schema.sql) in the Supabase SQL Editor. Apply migrations from [`database/supabase/migrations`](./database/supabase/migrations) as needed.
 
-   ```bash
-   npm run dev
-   ```
+### 4. Set up the backend
 
-   Vite will print the local URL in the terminal, normally `http://localhost:5173`.
-
-## Available scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the development server |
-| `npm run build` | Create a production build |
-| `npm run preview` | Preview the production build locally |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Check TypeScript types |
-
-## FastAPI backend
-
-The project includes a small FastAPI service in [`backend`](./backend), alongside the existing React/Supabase application. It currently provides a health-check endpoint and is structured for future worker, production, sales, and reporting APIs.
-
-To run it locally on Windows PowerShell:
+From the repository root:
 
 ```powershell
 cd backend
@@ -95,11 +108,23 @@ python -m pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-The API runs at `http://127.0.0.1:8000`. Visit `http://127.0.0.1:8000/docs` for interactive API documentation, or request `http://127.0.0.1:8000/health` to check its status.
+The API runs at `http://127.0.0.1:8000`. Use `http://127.0.0.1:8000/health` for the health check and `http://127.0.0.1:8000/docs` for API documentation.
+
+## Frontend commands
+
+Run these commands from `frontend/`:
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Check TypeScript types |
 
 ## Environment and security
 
-Keep your real Supabase credentials in `.env`. The `.env` file is ignored by Git and must not be committed. The browser-facing Supabase anonymous key is intended for client applications; protect data with appropriate Supabase Row Level Security policies.
+Keep real Supabase credentials in `frontend/.env`. Environment files and generated dependencies are ignored by Git. Never commit secrets. Protect application data with appropriate Supabase Row Level Security policies.
 
 ## Repository
 
