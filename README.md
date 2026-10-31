@@ -38,9 +38,12 @@ The FastAPI service currently provides:
 
 Database resources are kept in [`database`](./database):
 
-- [`schema.sql`](./database/schema.sql) contains the database schema
-- [`supabase`](./database/supabase) contains Supabase migrations
+- [`schema.sql`](./database/schema.sql) is the canonical schema for a new Supabase project
+- [`supabase`](./database/supabase) contains incremental migrations, including ownership-aware RLS
 - [`SETUP_GUIDE.md`](./database/SETUP_GUIDE.md) contains database setup notes
+
+The application uses `material_inventory` as its inventory source. The older
+`raw_materials` migration is not used by the current frontend.
 
 ## Technology stack
 
@@ -94,7 +97,11 @@ Vite normally serves the application at `http://localhost:5173`.
 
 ### 3. Set up the database
 
-Run [`database/schema.sql`](./database/schema.sql) in the Supabase SQL Editor. Apply migrations from [`database/supabase/migrations`](./database/supabase/migrations) as needed.
+Run [`database/schema.sql`](./database/schema.sql) once in the Supabase SQL Editor.
+For an existing installation, run
+[`20261031183000_harden_ownership_rls.sql`](./database/supabase/migrations/20261031183000_harden_ownership_rls.sql)
+after the schema. Authenticated users can read shared business records, while
+updates, deletes, and writes require `created_by = auth.uid()`.
 
 ### 4. Set up the backend
 
@@ -126,6 +133,16 @@ Run these commands from `frontend/`:
 
 Keep real Supabase credentials in `frontend/.env`. Environment files and generated dependencies are ignored by Git. Never commit secrets. Protect application data with appropriate Supabase Row Level Security policies.
 
-## Repository
+The browser uses only the Supabase project URL and publishable key. Never put a
+Supabase secret/service-role key in the frontend. The frontend validates
+required fields and positive numeric values before sending business records to
+Supabase.
 
-https://github.com/prajwalashok1974-gif/sa-silks-app
+## Interview-ready design points
+
+- React and TypeScript provide a responsive single-page operations dashboard.
+- Supabase provides PostgreSQL, authentication, REST data access, and RLS.
+- SQL migrations make security changes reproducible across environments.
+- Production, sales, inventory, and payments are stored as relational records
+  with foreign keys instead of browser-local state.
+- The dashboard calculates operational KPIs from live database records.

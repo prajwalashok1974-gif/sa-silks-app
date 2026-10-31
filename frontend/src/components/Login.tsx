@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Gem } from 'lucide-react';
+import { required } from '../lib/validation';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -18,8 +19,10 @@ export function Login() {
     setSuccess('');
 
     try {
+      const normalizedEmail = required(email, 'Email').toLowerCase();
+      required(password, 'Password');
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizedEmail,
         password,
       });
 
@@ -39,8 +42,12 @@ export function Login() {
     setSuccess('');
 
     try {
+      const normalizedEmail = required(email, 'Email').toLowerCase();
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters.');
+      }
       const { error } = await supabase.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
       });
 
@@ -65,7 +72,8 @@ export function Login() {
     setSuccess('');
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const normalizedEmail = required(email, 'Email').toLowerCase();
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
@@ -96,7 +104,7 @@ export function Login() {
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-rose-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Sparkles className="text-white" size={32} />
+                <Gem className="text-white" size={32} />
               </div>
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-200 to-rose-200 bg-clip-text text-transparent mb-2">

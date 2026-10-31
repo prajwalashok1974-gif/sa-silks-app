@@ -14,6 +14,18 @@ interface ReportData {
   };
 }
 
+interface ProductionReportRow {
+  quantity: number;
+  saree_type: string;
+  workers: { name: string; worker_id: string } | Array<{ name: string; worker_id: string }> | null;
+}
+
+interface MaterialReportRow {
+  remaining_quantity: number;
+  total_cost: number | null;
+  material_types: { material_name: string; unit: string } | Array<{ material_name: string; unit: string }> | null;
+}
+
 export function Reports() {
   const [reportData, setReportData] = useState<ReportData>({
     weeklyProduction: [],
@@ -44,12 +56,14 @@ export function Reports() {
           .from('sales')
           .select('buyer_name, location, quantity, total_amount')
           .gte('sale_date', weekAgoStr),
-        supabase.from('raw_materials').select('material_name, quantity, unit, total_cost'),
+        supabase
+          .from('material_inventory')
+          .select('remaining_quantity, total_cost, material_types(material_name, unit)'),
       ]);
 
-      const productionData = productionRes.data || [];
+      const productionData = (productionRes.data || []) as ProductionReportRow[];
       const salesData = salesRes.data || [];
-      const materialsData = materialsRes.data || [];
+      const materialsData = (materialsRes.data || []) as MaterialReportRow[];
 
       const weeklyProduction = productionData.map((p) => ({
         worker_name: p.workers ? (Array.isArray(p.workers) ? p.workers[0]?.name : p.workers.name) : 'Unknown',
@@ -74,9 +88,13 @@ export function Reports() {
       );
 
       const inventoryUsage = materialsData.map((m) => ({
-        material_name: m.material_name,
-        quantity: Number(m.quantity),
-        unit: m.unit,
+        material_name: Array.isArray(m.material_types)
+          ? m.material_types[0]?.material_name || 'Unknown'
+          : m.material_types?.material_name || 'Unknown',
+        quantity: Number(m.remaining_quantity),
+        unit: Array.isArray(m.material_types)
+          ? m.material_types[0]?.unit || 'units'
+          : m.material_types?.unit || 'units',
         total_cost: Number(m.total_cost),
       }));
 

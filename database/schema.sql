@@ -294,3 +294,20 @@ ON CONFLICT DO NOTHING;
 INSERT INTO public.cone_colors (color_name, section, color_code) VALUES
 ('Kalabat', 'section_3', '#1f2937')
 ON CONFLICT DO NOTHING;
+
+-- Harden writes while keeping shared read access for authenticated staff.
+DO $$
+DECLARE
+  table_name text;
+BEGIN
+  FOREACH table_name IN ARRAY ARRAY[
+    'workers', 'production', 'sales', 'factories', 'material_types',
+    'cone_colors', 'material_inventory', 'material_transactions',
+    'worker_payments', 'payment_advances'
+  ]
+  LOOP
+    EXECUTE format('DROP POLICY IF EXISTS "Allow all access to authenticated users" ON public.%I', table_name);
+    EXECUTE format('CREATE POLICY "Authenticated users can read %s" ON public.%I FOR SELECT TO authenticated USING (true)', table_name, table_name);
+    EXECUTE format('CREATE POLICY "Owners can write %s" ON public.%I FOR ALL TO authenticated USING (created_by = (select auth.uid())) WITH CHECK (created_by = (select auth.uid()))', table_name, table_name);
+  END LOOP;
+END $$;

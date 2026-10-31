@@ -37,7 +37,7 @@ export function Dashboard({ onNavigate }: { onNavigate: (view: string) => void }
       const [workersRes, materialsRes, weeklyProdRes, totalProdRes, weeklySalesAmtRes, totalSalesRes] =
         await Promise.all([
           supabase.from('workers').select('id', { count: 'exact', head: true }),
-          supabase.from('raw_materials').select('id', { count: 'exact', head: true }),
+          supabase.from('material_inventory').select('id', { count: 'exact', head: true }),
           supabase.from('production').select('quantity').gte('production_date', weekAgoStr),
           supabase.from('production').select('quantity'),
           supabase.from('sales').select('total_amount').gte('sale_date', weekAgoStr),

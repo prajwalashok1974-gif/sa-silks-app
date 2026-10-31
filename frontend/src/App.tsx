@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, Menu, X, LayoutDashboard, Users, Factory, TrendingUp, Package, CreditCard, BarChart3, Sparkles } from 'lucide-react';
+import { LogOut, Menu, X, LayoutDashboard, Users, Factory, TrendingUp, Package, CreditCard, BarChart3, Sparkles, Gem } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
@@ -64,7 +64,7 @@ export default function App() {
           <div className="h-20 flex items-center justify-between p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-rose-500 rounded-xl flex items-center justify-center">
-                <Sparkles className="text-white" size={24} />
+                <Gem className="text-white" size={24} />
               </div>
               {sidebarOpen && <div>
                 <p className="text-white font-bold text-lg">SA SILKS</p>

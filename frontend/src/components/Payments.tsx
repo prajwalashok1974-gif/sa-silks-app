@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Send, Trash2, X, RefreshCw, Wallet, TrendingDown, CheckCircle, Clock, IndianRupee, AlertCircle } from 'lucide-react';
+import { Send, X, RefreshCw, Wallet, TrendingDown, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 interface WorkerPayment {
   id: string;
@@ -25,18 +25,11 @@ interface PaymentAdvance {
   notes: string;
 }
 
-interface Worker {
-  id: string;
-  worker_id: string;
-  name: string;
-}
-
 const RATE_PER_SAREE = 220;
 
 export function Payments() {
   const [payments, setPayments] = useState<WorkerPayment[]>([]);
   const [advances, setAdvances] = useState<PaymentAdvance[]>([]);
-  const [workers, setWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdvanceForm, setShowAdvanceForm] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<WorkerPayment | null>(null);
@@ -81,7 +74,6 @@ export function Payments() {
       if (workersRes.error) throw workersRes.error;
       if (paymentRes.error) throw paymentRes.error;
 
-      setWorkers(workersRes.data || []);
 
       // Group production by worker
       const productionByWorker: Record<string, number> = {};
